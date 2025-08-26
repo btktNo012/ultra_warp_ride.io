@@ -1,0 +1,121 @@
+:root {
+    color-scheme: light dark;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.app-root {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% 30%, #0b1a2a, #03060a);
+    color: #e6eef8;
+}
+
+.game-container {
+    position: relative;
+    border: 1px solid #1b2b3b;
+    box-shadow: 0 0 0 2px #0d1824 inset;
+}
+
+canvas {
+    display: block;
+    background: transparent;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.panel {
+    background: rgba(8, 16, 24, 0.9);
+    padding: 16px 20px;
+    border: 1px solid #29465f;
+    border-radius: 8px;
+    max-width: 90%;
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.skins {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.skins button {
+    background: #142233;
+    border: 1px solid #2a4d6a;
+    border-radius: 8px;
+    padding: 8px 48px 8px 48px;
+    cursor: pointer;
+    color: #d6e2f0;
+}
+
+.skins img {
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    display: block;
+    background: #0a111a;
+}
+
+.hud {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.gauge {
+    flex: 1;
+    height: 10px;
+    background: #1a3046;
+    border: 1px solid #29465f;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.gauge>span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #72e0ff, #6affaa);
+}
+
+.error {
+    margin-top: 12px;
+    color: #ffb4b4;
+}
+
+.result {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.result .panel img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    display: block;
+    background: #0a111a;
+    margin: 8px auto;
+}
