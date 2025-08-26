@@ -22,6 +22,9 @@ export const IFRAME_SEC = 0.3
 export const SPAWN_RATE_HAZARD = 0.9 // per sec
 export const SPAWN_RATE_ENERGY = 0.6 // per sec
 export const SPAWN_RATE_WARP = 0.25 // per sec
+// スコアに応じたエネルギー出現率の低下カーブ
+export const ENERGY_SPAWN_MIN_FACTOR = 0.25 // スコア最大時の下限（通常比）
+export const ENERGY_SPAWN_CURVE = 1.2 // 減少カーブ（>1で後半で強く低下）
 
 // 一定周期で hazard だけが出現するバースト期間
 export const HAZARD_BURST_INTERVAL = 12 // バースト間隔（秒）

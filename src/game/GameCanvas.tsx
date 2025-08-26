@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { VIEW_W, VIEW_H, PLAYER_X, PLAYER_RADIUS, WORLD_SPEED, FOLLOW_INIT, FOLLOW_MAX, FOLLOW_MIN, DAMAGE_DELTA, ENERGY_DELTA, IFRAME_SEC, SPAWN_RATE_ENERGY, SPAWN_RATE_HAZARD, SPAWN_RATE_WARP, TARGET_SMOOTH_TAU, HAZARD_BURST_DURATION, HAZARD_BURST_INTERVAL, HAZARD_BURST_MULT, FOLLOW_DECAY_PER_SEC, HAZARD_BURST_MULT_MAX, SCORE_RARITY_SMAX } from '../core/constants'
+import { VIEW_W, VIEW_H, PLAYER_X, PLAYER_RADIUS, WORLD_SPEED, FOLLOW_INIT, FOLLOW_MAX, FOLLOW_MIN, DAMAGE_DELTA, ENERGY_DELTA, IFRAME_SEC, SPAWN_RATE_ENERGY, SPAWN_RATE_HAZARD, SPAWN_RATE_WARP, TARGET_SMOOTH_TAU, HAZARD_BURST_DURATION, HAZARD_BURST_INTERVAL, HAZARD_BURST_MULT, FOLLOW_DECAY_PER_SEC, HAZARD_BURST_MULT_MAX, SCORE_RARITY_SMAX, ENERGY_SPAWN_MIN_FACTOR, ENERGY_SPAWN_CURVE } from '../core/constants'
 import { clamp, circleCollide, updatePlayerY, applyWarpGravity } from '../core/physics'
 import { createTicker } from './loop'
 import { EntityBase, Rarity, SkinId, WarpHoleDef, WarpColor } from '../core/types'
@@ -135,7 +135,12 @@ export default function GameCanvas({ skin, mode, setMode, warpDefs, onGameOver, 
         }
         return SPAWN_RATE_HAZARD
       })()
-      const rateE = burstLeftRef.current > 0 ? 0 : SPAWN_RATE_ENERGY
+      const rateE = (() => {
+        if (burstLeftRef.current > 0) return 0
+        const p = clamp(scoreRef.current / SCORE_RARITY_SMAX, 0, 1)
+        const factor = 1 - (1 - ENERGY_SPAWN_MIN_FACTOR) * Math.pow(p, ENERGY_SPAWN_CURVE)
+        return SPAWN_RATE_ENERGY * factor
+      })()
       const rateW = burstLeftRef.current > 0 ? 0 : SPAWN_RATE_WARP
       trySpawn(spawner, dt, rateH, rateE, rateW, (e) => {
         if (e.kind === 'warp') {
