@@ -111,7 +111,7 @@ export default function App() {
               onHudUpdate={setHud}
             />
             <HUD follow={hud.follow} score={hud.score} time={hud.time} />
-            {(meta.mode === 'PAUSED' || meta.mode === 'MENU') && (
+            {meta.mode === 'PAUSED' && (
               <Overlay mode={meta.mode} isTouch={isTouch} onResume={onResume} />
             )}
             {meta.mode === 'GAME_OVER' && (
