@@ -61,6 +61,24 @@ export default function App() {
   const [warpDefs, setWarpDefs] = useState<WarpHoleDef[] | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [hud, setHud] = useState<{ follow: number; score: number; time: number }>({ follow: 1, score: 0, time: 0 })
+  const [scale, setScale] = useState<number>(1)
+
+  // ビューポートに応じてゲーム全体を縮小
+  useEffect(() => {
+    const updateScale = () => {
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      const s = Math.min(1, Math.min(vw / VIEW_W, vh / VIEW_H))
+      setScale(s)
+    }
+    updateScale()
+    window.addEventListener('resize', updateScale)
+    window.addEventListener('orientationchange', updateScale)
+    return () => {
+      window.removeEventListener('resize', updateScale)
+      window.removeEventListener('orientationchange', updateScale)
+    }
+  }, [])
 
   useEffect(() => {
     loadWarpTables()
@@ -97,7 +115,14 @@ export default function App() {
 
   return (
     <div className="app-root">
-      <div className="game-container" style={{ width: VIEW_W, height: VIEW_H }}>
+      <div
+        className="game-scale-wrapper"
+        style={{ width: Math.floor(VIEW_W * scale), height: Math.floor(VIEW_H * scale) }}
+      >
+        <div
+          className="game-container"
+          style={{ width: VIEW_W, height: VIEW_H, transform: `scale(${scale})`, transformOrigin: 'top left' }}
+        >
         {meta.mode === 'MENU' && <SkinSelect onPlay={onPlay} />}
         {meta.mode !== 'MENU' && (
           <>
@@ -125,6 +150,7 @@ export default function App() {
             )}
           </>
         )}
+        </div>
       </div>
       {loadError && <div className="error">データ読み込みエラー: {loadError}</div>}
     </div>

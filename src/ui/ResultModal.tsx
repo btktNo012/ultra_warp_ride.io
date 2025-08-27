@@ -11,7 +11,7 @@ export default function ResultModal({ skin, warpName, encounterName, encounterIm
   return (
     <div className="result">
       <div className="panel">
-        <h3>{skinLabel[skin]}とともに{warpName}にたどりついた！</h3>
+        <h3>{skinLabel[skin]}とともに{warpName}にたどり着いた！</h3>
         <div>
           {encounterImage ? (
             <img src={`${base}images/pokemon/${encounterImage}`} alt={encounterName} />
@@ -20,7 +20,7 @@ export default function ResultModal({ skin, warpName, encounterName, encounterIm
               画像なし
             </div>
           )}
-          <div style={{ textAlign: 'center', marginTop: 8 }}>出会ったポケモン: {encounterName}</div>
+          <div style={{ textAlign: 'center', marginTop: 8 }}> {encounterName}と出会った！</div>
         </div>
         <div className="row" style={{ marginTop: 12 }}>
           <button onClick={onRetry}>もう一度</button>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { VIEW_W, VIEW_H, PLAYER_X, PLAYER_RADIUS, WORLD_SPEED, FOLLOW_INIT, FOLLOW_MAX, FOLLOW_MIN, DAMAGE_DELTA, ENERGY_DELTA, IFRAME_SEC, SPAWN_RATE_ENERGY, SPAWN_RATE_HAZARD, SPAWN_RATE_WARP, TARGET_SMOOTH_TAU, HAZARD_BURST_DURATION, HAZARD_BURST_INTERVAL, HAZARD_BURST_MULT, FOLLOW_DECAY_PER_SEC, HAZARD_BURST_MULT_MAX, SCORE_RARITY_SMAX, ENERGY_SPAWN_MIN_FACTOR, ENERGY_SPAWN_CURVE } from '../core/constants'
+import { VIEW_W, VIEW_H, PLAYER_X, PLAYER_RADIUS, WORLD_SPEED, FOLLOW_INIT, FOLLOW_MAX, FOLLOW_MIN, DAMAGE_DELTA, ENERGY_DELTA, IFRAME_SEC, SPAWN_RATE_ENERGY, SPAWN_RATE_HAZARD, SPAWN_RATE_WARP, TARGET_SMOOTH_TAU, HAZARD_BURST_DURATION, HAZARD_BURST_INTERVAL, HAZARD_BURST_MULT, FOLLOW_DECAY_PER_SEC, HAZARD_BURST_MULT_MAX, SCORE_RARITY_SMAX, ENERGY_SPAWN_MIN_FACTOR, ENERGY_SPAWN_CURVE, SCORE_DISPLAY_SCALE } from '../core/constants'
 import { clamp, circleCollide, updatePlayerY, applyWarpGravity } from '../core/physics'
 import { createTicker } from './loop'
 import { EntityBase, Rarity, SkinId, WarpHoleDef, WarpColor } from '../core/types'
@@ -52,22 +52,27 @@ export default function GameCanvas({ skin, mode, setMode, warpDefs, onGameOver, 
       if ('ontouchstart' in window) return // タッチ優先
       const r = rectOf()
       const y = e.clientY - r.top
-      targetYRef.current = clamp(y, 0, VIEW_H)
+      const gy = (y / r.height) * VIEW_H
+      targetYRef.current = clamp(gy, 0, VIEW_H)
     }
     const onTouch = (e: TouchEvent) => {
+      // スクロール等の既定挙動を抑止
+      if (e.cancelable) e.preventDefault()
       const r = rectOf()
       const t = e.touches[0]
       if (!t) return
       const y = t.clientY - r.top
-      targetYRef.current = clamp(y, 0, VIEW_H)
+      const gy = (y / r.height) * VIEW_H
+      targetYRef.current = clamp(gy, 0, VIEW_H)
     }
     canvas.addEventListener('mousemove', onMouse)
-    canvas.addEventListener('touchstart', onTouch)
-    canvas.addEventListener('touchmove', onTouch)
+    canvas.addEventListener('touchstart', onTouch, { passive: false })
+    canvas.addEventListener('touchmove', onTouch, { passive: false })
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault())
     return () => {
       canvas.removeEventListener('mousemove', onMouse)
-      canvas.removeEventListener('touchstart', onTouch)
-      canvas.removeEventListener('touchmove', onTouch)
+      canvas.removeEventListener('touchstart', onTouch as any)
+      canvas.removeEventListener('touchmove', onTouch as any)
     }
   }, [])
 
@@ -203,7 +208,8 @@ export default function GameCanvas({ skin, mode, setMode, warpDefs, onGameOver, 
       if (onHudUpdate) {
         if (newTime - lastHudSentRef.current >= 0.1) {
           lastHudSentRef.current = newTime
-          onHudUpdate({ follow: followStrengthRef.current, score: newScore, time: newTime })
+          const displayScore = Math.floor(newScore * SCORE_DISPLAY_SCALE)
+          onHudUpdate({ follow: followStrengthRef.current, score: displayScore, time: newTime })
         }
       }
 
@@ -218,16 +224,16 @@ export default function GameCanvas({ skin, mode, setMode, warpDefs, onGameOver, 
     return () => ticker.stop()
   }, [mode, assets, warpDefs, setMode])
 
-  // モード変更にあわせて初期化
+  // モード変更にあわせて初期化（MENUに入った時のみ）
   useEffect(() => {
-    if (mode === 'PLAYING') return
-    // 非PLAYING時は状態を初期化（refs）
+    if (mode !== 'MENU') return
     targetYRef.current = VIEW_H / 2
     playerYRef.current = VIEW_H / 2
     vyRef.current = 0
     followStrengthRef.current = FOLLOW_INIT
     scoreRef.current = 0
     timeRef.current = 0
+    lastHudSentRef.current = 0
     iframeRef.current = 0
     entitiesRef.current = []
     burstLeftRef.current = 0

@@ -515,3 +515,38 @@ export function drawEncounter(
 ```
 
 この指示書どおりに、コンポーネント・型・JSON・Canvas ループを実装すること。
+
+---
+
+## 付録A: 本リポジトリの実装メモ（再開用）
+
+### 実装済みの主な変更
+- Vite + React + TS で構築。`index.html` はリポジトリ直下。
+- 画像は GIF 前提（スキン/ポケモン）。`public/data/warp_tables.json` は 5色×4レア度。
+- GitHub Pages 対応: `vite.config.ts` の `base` は `/ultra_warp_ride.io/`。画像/JSON参照に `import.meta.env.BASE_URL` を使用。
+- デプロイ: `.github/workflows/deploy.yml`（main push で `dist/` を Pages へ）。リポジトリ Settings → Pages → Source は GitHub Actions。
+- 物理・描画の安定化:
+  - 目標Yローパス（`TARGET_SMOOTH_TAU`）と速度上限（`PLAYER_VEL_MAX_BASE`）。
+  - ワープ吸引は `followStrength` でスケール（高追尾時は弱く）。
+  - 追尾力は自然減衰（`FOLLOW_DECAY_PER_SEC`）。
+  - 背景はランダム星（3層パララックス、dt移動、整数ピクセル）。
+  - ワープ視覚: レア2=リング1、レア3=リング2、レア4=リング2 + 外周6点固定。
+  - バースト導入: `HAZARD_BURST_INTERVAL`/`DURATION`。バースト中は hazard のみ。倍率は `score` で `HAZARD_BURST_MULT..MAX` に補間。
+
+### 主要定数（追加・調整）
+- `PLAYER_VEL_MAX_BASE = 600`
+- `TARGET_SMOOTH_TAU = 0.08`
+- `FOLLOW_DECAY_PER_SEC = 0.015`
+- `SCORE_RARITY_SMAX = 60000`
+- `HAZARD_BURST_INTERVAL = 12`, `HAZARD_BURST_DURATION = 4`,
+  `HAZARD_BURST_MULT = 3.0`, `HAZARD_BURST_MULT_MAX = 6.0`
+
+### 既知の注意点
+- `App.tsx` の Overlay 条件は `meta.mode === 'PAUSED'` のみ（型エラー解消済み）。
+- 画像未配置時はプレースホルダ表示（実機では `public/images` に GIF を配置）。
+
+### 次回TODO
+- GIF最適化/サイズ調整（必要なら WebP 併用）。
+- HUD の追尾力ゲージを内部値に厳密同期（現状は10Hz更新）。
+- モバイル向け調整（入力感度・パフォーマンス）。
+- 効果音/演出（バースト時の画面効果など）。

@@ -1,7 +1,7 @@
 export const VIEW_W = 960
 export const VIEW_H = 540
 
-export const WORLD_SPEED = 240 // px/s
+export const WORLD_SPEED = 480 // px/s
 
 export const PLAYER_X = VIEW_W * 0.25
 export const PLAYER_RADIUS = 16
@@ -30,12 +30,15 @@ export const ENERGY_SPAWN_CURVE = 1.2 // 減少カーブ（>1で後半で強く�
 export const HAZARD_BURST_INTERVAL = 12 // バースト間隔（秒）
 export const HAZARD_BURST_DURATION = 4 // バースト継続時間（秒）
 export const HAZARD_BURST_MULT = 3.0 // バースト中のhazard湧き倍率
-export const HAZARD_BURST_MULT_MAX = 6.0 // スコア最大時の湧き倍率上限
+export const HAZARD_BURST_MULT_MAX = 20.0 // スコア最大時の湧き倍率上限
 
 export const HAZARD_R = 14
 export const ENERGY_R = 12
 export const WARP_R = 28
 export const WARP_GRAVITY_RADIUS = 180
-export const WARP_GRAVITY_STRENGTH = 20000 // 引力係数（Y方向のみに適用）
+export const WARP_GRAVITY_STRENGTH = 30000 // 引力係数（Y方向のみに適用）
 
 export const SCORE_RARITY_SMAX = 60000 // レア度用の正規化上限（任意）
+
+// 表示用スコア倍率（ゲーム内部ロジックには影響しない）
+export const SCORE_DISPLAY_SCALE = 0.1

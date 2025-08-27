@@ -101,10 +101,10 @@ export function drawEntities(ctx: CanvasRenderingContext2D, entities: EntityBase
       ctx.stroke()
     }
 
-    // レア4: 衛星6つを回転
+    // レア4: 衛星6つ
     if (rarity >= 4) {
-      const orbitR = e.r + 32
-      const smallR = 5
+      const orbitR = e.r + 8
+      const smallR = 12
       // 外周上に6つの小円を等間隔に固定配置
       for (let i = 0; i < 6; i++) {
         const ang = (i * Math.PI * 2) / 6
